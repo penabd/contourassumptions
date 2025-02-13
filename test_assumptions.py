@@ -120,26 +120,6 @@ def case2():
 
     return f, x, y, x_vals, y_vals, z_vals, sources
 
-def case3():
-    """
-    """
-    # create gaussians
-    f, x, y = symbolic_gaussian(0.5,0.2,0.5,0.2)
-    f2, _, _ = symbolic_gaussian(-0.5,0.2,-0.5,0.2)
-    # f3 = sp.exp(- ((x-(-0.35))**2 / (2*0.05)) -  ((y-(-0.35))**2 / (2*0.05)))
-
-    f = f + f2
-
-    sources = [(0.5,0.5), [-0.5, -0.5]]
-    
-    # Load your scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_contours_data_3.txt")
-
-    # Extract x, y, z values
-    x_vals, y_vals, z_vals = data[:, 0], data[:, 1], data[:, 2]
-
-    return f, x, y, x_vals, y_vals, z_vals, sources
-
 def case4():
     """
     """
@@ -154,6 +134,26 @@ def case4():
     
     # Load your scattered (x, y, z) data from the Gaussian contour file
     data = np.loadtxt("gaussian_contours_data_4.txt")
+
+    # Extract x, y, z values
+    x_vals, y_vals, z_vals = data[:, 0], data[:, 1], data[:, 2]
+
+    return f, x, y, x_vals, y_vals, z_vals, sources
+
+def case3():
+    """
+    """
+    # create gaussians
+    f, x, y = symbolic_gaussian(1,0.75,1,0.75)
+    f2, _, _ = symbolic_gaussian(-1,0.75,-1,0.75)
+    # f3 = sp.exp(- ((x-(-0.35))**2 / (2*0.05)) -  ((y-(-0.35))**2 / (2*0.05)))
+
+    f = f + f2
+
+    sources = [(1,0.5), [1, -0.5]]
+    
+    # Load your scattered (x, y, z) data from the Gaussian contour file
+    data = np.loadtxt("gaussian_contours_data_5.txt")
 
     # Extract x, y, z values
     x_vals, y_vals, z_vals = data[:, 0], data[:, 1], data[:, 2]
@@ -199,8 +199,8 @@ def assumption2(curvature_info, sources):
                 contour_num.append(ctr)
 
     plt.figure()
-    plt.scatter(contour_num, dists_from_source, edgecolors='black',)
-    plt.scatter(contour_num, radius_of_curvs, edgecolors='black',)
+    plt.scatter(contour_num, dists_from_source, edgecolors='black', label="DFNS")
+    plt.scatter(contour_num, radius_of_curvs, edgecolors='black', label="Radius of Curvature")
     plt.xlabel("Contour Level f(x,y) = c")
     plt.ylabel("Distance from Nearest Source and Radius of Curv.")
     plt.legend()
@@ -213,19 +213,21 @@ def assumption2(curvature_info, sources):
     plt.plot([min_val, max_val], [min_val, max_val], color="black", linestyle="--",)  
     plt.xlabel("Radius of Curvature")
     plt.ylabel("Distance from Nearest Source")
-    plt.legend()
     plt.show()
 
     plt.figure()
     plt.plot(contour_num, ratios)
     plt.xlabel("Contour Level f(x,y) = c")
     plt.ylabel("Radius of Curvature / Distance from Nearest Source")
+    plt.axhline(y = max(ratios), linestyle="--", color="black", 
+                label = f"possible c = {np.round(max(ratios),3)}")
+    plt.legend(loc = 'lower right')
     plt.show()
 
 
 
 def main():
-    f, x, y, x_vals, y_vals, z_vals, sources = case4() 
+    f, x, y, x_vals, y_vals, z_vals, sources = case3() 
     
     # Plot contours using `tricontour`
     fig, ax = plt.subplots()
@@ -290,9 +292,9 @@ def main():
                     #             filtered_curv_vals[:, 1], 
                     #             'ro')  
                     # else:
-                    # plt.plot(curvature_vals[maxcurv_global_indices, 0], 
-                    #         curvature_vals[maxcurv_global_indices, 1], 
-                    #         'ro')  
+                    plt.plot(curvature_vals[maxcurv_global_indices, 0], 
+                            curvature_vals[maxcurv_global_indices, 1], 
+                            'ro')  
 
                     cps_and_curves[c] = curvature_vals[maxcurv_global_indices,:]
 
@@ -307,11 +309,11 @@ def main():
                 #     print(curvature_vals[gzero_indices,2])
                 # gzero_indices = gzero_indices[convex_indices]
                 
-                # if len(gzero_indices) > 0:
-                #     plt.plot(gradient_vals[gzero_indices, 0],
-                #              gradient_vals[gzero_indices, 1],
-                #              'bo', 
-                #              label="Gradient Zero")
+                if len(gzero_indices) > 0:
+                    plt.plot(gradient_vals[gzero_indices, 0],
+                             gradient_vals[gzero_indices, 1],
+                             'bo', 
+                             label="Gradient Zero")
 
 
 
