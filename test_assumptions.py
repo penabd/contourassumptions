@@ -61,7 +61,8 @@ def calc_curvature(x_val, y_val, x, y, hessian, gradient):
 
 def is_convex(x_val, y_val, x, y, hessian):
     hessian_eval = [f.subs({x:x_val, y:y_val}).evalf() for f in hessian]
-    hessian_eval = np.array(hessian_eval).astype('float64').reshape(2,2)
+    hessian_eval = np.array(hessian_eval).astype('float64')
+    hessian_eval = hessian_eval.reshape(2,2, order='F')
     print(hessian_eval)
     print(hessian_eval.shape)
 
@@ -101,16 +102,18 @@ def case2():
     """
     """
         # create gaussians
-    f, x, y = symbolic_gaussian(0.5,0.05,0.5,0.05)
-    f2 = sp.exp(- ((x)**2 / (2*0.1)) -  ((y)**2 / (2*0.1)))
-    f3 = sp.exp(- ((x-(-0.35))**2 / (2*0.05)) -  ((y-(-0.35))**2 / (2*0.05)))
+    # f, x, y = symbolic_gaussian(0.5,0.05,0.5,0.05)
+    # f2 = sp.exp(- ((x)**2 / (2*0.1)) -  ((y)**2 / (2*0.1)))
+    # f3 = sp.exp(- ((x-(-0.35))**2 / (2*0.05)) -  ((y-(-0.35))**2 / (2*0.05)))
+    f, x, y = symbolic_gaussian(0.25,0.08,0.25,0.08)
+    f2, _, _ = symbolic_gaussian(-0.25,0.08,-0.25,0.08)
 
-    f = f + f2 + f3
+    f = f + f2
 
-    sources = [(0.5,0.5), [-0.175, -0.175]]
+    sources = [(0.25,0.25), [-0.25, -0.25]]
     
     # Load your scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_contour_data.txt")
+    data = np.loadtxt("gaussian_contours_data_2.txt")
 
     # Extract x, y, z values
     x_vals, y_vals, z_vals = data[:, 0], data[:, 1], data[:, 2]
@@ -121,13 +124,13 @@ def case3():
     """
     """
     # create gaussians
-    f, x, y = symbolic_gaussian(0.45,0.1,0.45,0.1)
-    f2, _, _ = symbolic_gaussian(-0.45,0.1,-0.45,0.1)
+    f, x, y = symbolic_gaussian(0.5,0.2,0.5,0.2)
+    f2, _, _ = symbolic_gaussian(-0.5,0.2,-0.5,0.2)
     # f3 = sp.exp(- ((x-(-0.35))**2 / (2*0.05)) -  ((y-(-0.35))**2 / (2*0.05)))
 
     f = f + f2
 
-    sources = [(0.45,0.45), [-0.45, -0.45]]
+    sources = [(0.5,0.5), [-0.5, -0.5]]
     
     # Load your scattered (x, y, z) data from the Gaussian contour file
     data = np.loadtxt("gaussian_contours_data_3.txt")
@@ -196,6 +199,14 @@ def assumption2(curvature_info, sources):
                 contour_num.append(ctr)
 
     plt.figure()
+    plt.scatter(contour_num, dists_from_source, edgecolors='black',)
+    plt.scatter(contour_num, radius_of_curvs, edgecolors='black',)
+    plt.xlabel("Contour Level f(x,y) = c")
+    plt.ylabel("Distance from Nearest Source and Radius of Curv.")
+    plt.legend()
+    plt.show()
+
+    plt.figure()
     plt.scatter(radius_of_curvs, dists_from_source, edgecolors='black',)
     min_val = min(min(radius_of_curvs), min(dists_from_source))  
     max_val = max(max(radius_of_curvs), max(dists_from_source))  
@@ -252,7 +263,7 @@ def main():
             num_maxcurv_points = min(1, len(curvature_vals))
 
             # grab max curvurtature in x different regions
-            num_regions = 8
+            num_regions = 3
             seg_length = len(x_pts) // num_regions
 
 
@@ -271,17 +282,17 @@ def main():
                     #                         for x_val, y_val, _ in curvature_vals[maxcurv_global_indices]
                     #                     ])[0] 
                     
-                    # maxcurv_global_indices = maxcurv_global_indices[convex_indices]
-                    filtered_curv_vals = np.array(filter_local_maxima(curvature_vals))
+                    # maxcurv_global_indices = np.array(maxcurv_global_indices)[convex_indices]
+                    # filtered_curv_vals = np.array(filter_local_maxima(curvature_vals))
 
-                    if len(filtered_curv_vals) > 0:
-                        plt.plot(filtered_curv_vals[:,0], 
-                                filtered_curv_vals[:, 1], 
-                                'ro')  
-                    else:
-                        plt.plot(curvature_vals[maxcurv_global_indices, 0], 
-                                curvature_vals[maxcurv_global_indices, 1], 
-                                'go')  
+                    # if len(filtered_curv_vals) > 0:
+                    #     plt.plot(filtered_curv_vals[:,0], 
+                    #             filtered_curv_vals[:, 1], 
+                    #             'ro')  
+                    # else:
+                    # plt.plot(curvature_vals[maxcurv_global_indices, 0], 
+                    #         curvature_vals[maxcurv_global_indices, 1], 
+                    #         'ro')  
 
                     cps_and_curves[c] = curvature_vals[maxcurv_global_indices,:]
 
@@ -296,11 +307,11 @@ def main():
                 #     print(curvature_vals[gzero_indices,2])
                 # gzero_indices = gzero_indices[convex_indices]
                 
-                if len(gzero_indices) > 0:
-                    plt.plot(gradient_vals[gzero_indices, 0],
-                             gradient_vals[gzero_indices, 1],
-                             'bo', markersize=8, 
-                             label="Gradient Zero")
+                # if len(gzero_indices) > 0:
+                #     plt.plot(gradient_vals[gzero_indices, 0],
+                #              gradient_vals[gzero_indices, 1],
+                #              'bo', 
+                #              label="Gradient Zero")
 
 
 
