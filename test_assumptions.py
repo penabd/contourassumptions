@@ -120,6 +120,27 @@ def case2():
 
     return f, x, y, x_vals, y_vals, z_vals, sources
 
+
+def case3():
+    """
+    """
+    # create gaussians
+    f, x, y = symbolic_gaussian(1,0.75,1,0.75)
+    f2, _, _ = symbolic_gaussian(-1,0.75,-1,0.75)
+    # f3 = sp.exp(- ((x-(-0.35))**2 / (2*0.05)) -  ((y-(-0.35))**2 / (2*0.05)))
+
+    f = f + f2
+
+    sources = [(1,0.5), [1, -0.5]]
+    
+    # Load your scattered (x, y, z) data from the Gaussian contour file
+    data = np.loadtxt("gaussian_contours_data_3.txt")
+
+    # Extract x, y, z values
+    x_vals, y_vals, z_vals = data[:, 0], data[:, 1], data[:, 2]
+
+    return f, x, y, x_vals, y_vals, z_vals, sources
+
 def case4():
     """
     """
@@ -140,25 +161,6 @@ def case4():
 
     return f, x, y, x_vals, y_vals, z_vals, sources
 
-def case3():
-    """
-    """
-    # create gaussians
-    f, x, y = symbolic_gaussian(1,0.75,1,0.75)
-    f2, _, _ = symbolic_gaussian(-1,0.75,-1,0.75)
-    # f3 = sp.exp(- ((x-(-0.35))**2 / (2*0.05)) -  ((y-(-0.35))**2 / (2*0.05)))
-
-    f = f + f2
-
-    sources = [(1,0.5), [1, -0.5]]
-    
-    # Load your scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_contours_data_5.txt")
-
-    # Extract x, y, z values
-    x_vals, y_vals, z_vals = data[:, 0], data[:, 1], data[:, 2]
-
-    return f, x, y, x_vals, y_vals, z_vals, sources
 
 def find_sources(x,y, gradient):
     sources = sp.solve(gradient, (x,y))
@@ -265,7 +267,7 @@ def main():
             num_maxcurv_points = min(1, len(curvature_vals))
 
             # grab max curvurtature in x different regions
-            num_regions = 3
+            num_regions = 2
             seg_length = len(x_pts) // num_regions
 
 
