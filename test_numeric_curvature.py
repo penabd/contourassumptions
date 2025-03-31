@@ -5,7 +5,7 @@ import numpy as np
 import seaborn as sns
 import math
 import pandas as pd
-from matplotlib.colors import TwoSlopeNorm
+from matplotlib.colors import TwoSlopeNorm, LogNorm
 
 from curvature_solve import calc_curvature_LSQ, curvature_derivative
 
@@ -17,7 +17,7 @@ def case1():
     sources = [(0,0)]
     
     # Load scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_ellipse_data.txt")
+    data = np.loadtxt("data/gaussian_ellipse_data.txt")
 
     return data, sources
 
@@ -27,7 +27,7 @@ def case2():
     sources = [(0.25,0.25), [-0.25, -0.25]]
     
     # Load your scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_contours_data_2.txt")
+    data = np.loadtxt("data/gaussian_contours_data_2.txt")
 
     return data, sources
 
@@ -38,7 +38,7 @@ def case3():
     sources = [(1,0.5), [1, -0.5]]
     
     # Load your scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_contours_data_3.txt")
+    data = np.loadtxt("data/gaussian_contours_data_3.txt")
 
     return data, sources
 
@@ -46,10 +46,10 @@ def case3():
 def case4():
     """
     """
-    sources = [(2,2), [0,0], [-2,2]]
+    sources = [(1,1), [0,-1], [-1,1]]
     
     # Load your scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_contours_data_5.txt")
+    data = np.loadtxt("data/gaussian_contours_data_4.txt")
 
     return data, sources
 
@@ -191,19 +191,18 @@ def plot_abs_curvature_gradient_heatmap(data, curvature_vals, dk):
     dk_norm = dk / np.nanmean(dk)
     
     norm = TwoSlopeNorm(vmin=0, vcenter=0.5, vmax=1) 
-    # norm = TwoSlopeNorm(vmin=np.min(dk), vcenter=0, vmax=np.max(dk)) 
 
     # Create a scatter plot with a heatmap based on the gradient of curvature
     sc = ax.scatter(x, y, c=dk_norm, cmap='viridis_r', norm=norm, alpha=1, s=10)
-    plt.colorbar(sc, label='Gradient of Curvature (dk)**2')
+    plt.colorbar(sc, label=r'$(\nabla \kappa)^2$')
 
-    plt.title("Normalized Gradient of Curvature Function")
+    plt.title(r"Normalized $(\nabla \kappa)^2$")
     plt.xlabel("X-axis")
     plt.ylabel("Y-axis")
     plt.show()
 
 def main():
-    testCase = "case2"
+    testCase = "case4"
     if testCase == "case1":
         data, sources = case1()
     elif testCase == "case2":

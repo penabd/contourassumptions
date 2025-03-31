@@ -37,6 +37,19 @@ def calc_sym_hessian(fx, fy, x, y):
 
     return [fxx, fxy, fyx, fyy]
 
+def sym_curv_function(hessian, gradient):
+    """
+    """
+    fxx, fxy, fyx, fyy = hessian
+    fx, fy = gradient
+
+    knum = (fy**2)*fxx - 2*fx*fy*fxy + (fx**2)*fyy
+    kden = (fx**2) + (fy**2)**1.5
+
+    k = (knum / kden) * -1
+
+    return k 
+
 def calc_curvature(x_val, y_val, x, y, hessian, gradient):
     """Calculate curvature using cylindrical coordinates. 
     
@@ -91,7 +104,7 @@ def case1():
     sources = [(0,0)]
     
     # Load your scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_ellipse_data.txt")
+    data = np.loadtxt("data/gaussian_ellipse_data.txt")
 
     # Extract x, y, z values
     x_vals, y_vals, z_vals = data[:, 0], data[:, 1], data[:, 2]
@@ -113,7 +126,7 @@ def case2():
     sources = [(0.25,0.25), [-0.25, -0.25]]
     
     # Load your scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_contours_data_2.txt")
+    data = np.loadtxt("data/gaussian_contours_data_2.txt")
 
     # Extract x, y, z values
     x_vals, y_vals, z_vals = data[:, 0], data[:, 1], data[:, 2]
@@ -134,7 +147,7 @@ def case3():
     sources = [(1,0.5), [1, -0.5]]
     
     # Load your scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_contours_data_3.txt")
+    data = np.loadtxt("data/gaussian_contours_data_3.txt")
 
     # Extract x, y, z values
     x_vals, y_vals, z_vals = data[:, 0], data[:, 1], data[:, 2]
@@ -145,16 +158,16 @@ def case4():
     """
     """
     # create gaussians
-    f, x, y = symbolic_gaussian(0.75,0.1,0.75,0.1)
-    f2, _, _ = symbolic_gaussian(0,0.1,0,0.1)
-    f3, _, _ = symbolic_gaussian(-0.75,0.1,-0.75,0.1)
+    f, x, y = symbolic_gaussian(1,0.1,1,0.5)
+    f2, _, _ = symbolic_gaussian(0,0.5,-1,0.1)
+    f3, _, _ = symbolic_gaussian(-1,0.4,1,0.4)
 
     f = f + f2 + f3
 
-    sources = [(0.75,0.75), [-0.75, -0.75], [0,0]]
+    sources = [(1,1), [0, -1], [-1,1]]
     
     # Load your scattered (x, y, z) data from the Gaussian contour file
-    data = np.loadtxt("gaussian_contours_data_4.txt")
+    data = np.loadtxt("data/gaussian_contours_data_4.txt")
 
     # Extract x, y, z values
     x_vals, y_vals, z_vals = data[:, 0], data[:, 1], data[:, 2]
@@ -229,7 +242,7 @@ def assumption2(curvature_info, sources):
 
 
 def main():
-    f, x, y, x_vals, y_vals, z_vals, sources = case3() 
+    f, x, y, x_vals, y_vals, z_vals, sources = case2() 
     
     # Plot contours using `tricontour`
     fig, ax = plt.subplots()
